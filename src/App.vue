@@ -2,6 +2,7 @@
 import * as pdfjsLib from 'pdfjs-dist'
 import 'pdfjs-dist/build/pdf.worker.min.mjs'
 import type { TextItem } from 'pdfjs-dist/types/src/display/api'
+import { charMap, getProductDetails } from '@/scripts/shared_functions'
 
 const correctText = (input: string): string => {
   return input
@@ -10,46 +11,16 @@ const correctText = (input: string): string => {
     .join('')
 }
 
-const charMap: { [key: string]: string } = {
-  ą: 'ą',
-  ü: 'ć',
-  Ċ: 'ę',
-  á: 'ł',
-  Ĕ: 'ń',
-  ó: 'ó',
-  Ğ: 'ś',
-  Ī: 'ż',
-  Ĩ: 'ź',
-  Ą: 'Ą',
-  û: 'Ć',
-  ĉ: 'Ę',
-  à: 'Ł',
-  ē: 'Ń',
-  Ó: 'Ó',
-  ĝ: 'Ś',
-  ĩ: 'Ż',
-  ħ: 'Ź',
-}
-
 async function addItemsFromFiles(event: Event): Promise<void> {
   const target = event.target as HTMLInputElement
-  const files = target.files as FileList
-  console.log(files)
-
-  const extractedData = await extractDataFromPDF(files)
-  console.group(extractedData)
-  // const usefullData = filterUselessData(extractedData);
+  const pdfFiles = target.files as FileList
+  const textFiles = await extractTextFromPDF(pdfFiles)
+  console.log(textFiles)
+  // const usefullData = filterUselessData(textFiles);
   // const dataToDisplay = buildDataToDisplay(usefullData);
-
-  // labelsStore.addItem(...dataToDisplay)
-  // target.value = '' /**reset input */
-
-  // console.log('extractedData: ', extractedData);
-  // console.log('usefullData: ', usefullData);
-  // console.log('dataToDisplay: ', dataToDisplay);
 }
 
-async function extractDataFromPDF(files: FileList): Promise<Map<string, string[]>> {
+async function extractTextFromPDF(files: FileList): Promise<Map<string, string[]>> {
   const filesCount = files.length
   const result: Map<string, string[]> = new Map()
   for (let fileIndex = 0; fileIndex < filesCount; fileIndex++) {
@@ -58,33 +29,39 @@ async function extractDataFromPDF(files: FileList): Promise<Map<string, string[]
       console.log(`Invalid file type: ${file.type}`, file)
       continue
     }
+
     const arrayBuffer = await file.arrayBuffer()
-
-    // const pdf = await pdfjsLib.getDocument(arrayBuffer).promise
-    const pdf = await pdfjsLib.getDocument({
-      data: arrayBuffer,
-      // cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/cmaps/',
-      cMapUrl: 'https://unpkg.com/browse/pdfjs-dist@4.10.38/cmaps/',
-      cMapPacked: false,
-    }).promise
+    const pdf = await pdfjsLib.getDocument(arrayBuffer).promise
     const pagesCount = pdf.numPages
+    const gridFile: string[] = []
 
-    const extractedFile: string[] = []
-    // Function to ensure the grid has at least y rows and x columns
     const ensureGridSize = (grid: string[][], y: number, x: number): void => {
-      // Add rows if needed
       while (grid.length <= y) {
-        grid.push([]) // Add an empty row
+        grid.push([])
       }
-      // Add columns in the specific row if needed
       while (grid[y].length <= x) {
-        grid[y].push('') // Add an empty string for each new column
+        grid[y].push('')
       }
     }
 
     const setGridValue = (grid: string[][], y: number, x: number, text: string): void => {
-      ensureGridSize(grid, y, x) // Ensure the grid is large enough
-      grid[y][x] = text // Set the value
+      ensureGridSize(grid, y, x)
+      grid[y][x] = text
+    }
+
+    const removeEmptyGridCells = (grid: string[][]): void => {
+      for (let row = 0; row < grid.length; row++) {
+        for (let cell = 0; cell < grid[row].length; cell++) {
+          if (grid[row][cell].length === 0) {
+            grid[row].splice(cell, 1)
+            cell--
+          }
+        }
+        if (grid[row].length === 0) {
+          grid.splice(row, 1)
+          row--
+        }
+      }
     }
 
     for (let pageIndex = 1; pageIndex <= pagesCount; pageIndex++) {
@@ -103,23 +80,18 @@ async function extractDataFromPDF(files: FileList): Promise<Map<string, string[]
         setGridValue(grid, y, x, `${text}`)
       }
 
-      for (let row = 0; row < grid.length; row++) {
-        for (let cell = 0; cell < grid[row].length; cell++) {
-          if (grid[row][cell].length === 0) {
-            grid[row].splice(cell, 1) // Remove the cell
-            cell-- // Adjust the index since the array has shifted
-          }
-        }
-        // Remove the row if it becomes empty
-        if (grid[row].length === 0) {
-          grid.splice(row, 1)
-          row-- // Adjust the index since the grid has shifted
-        }
-      }
-      console.log(grid.reverse().map((row) => row.join('')))
+      removeEmptyGridCells(grid)
+
+      gridFile.push(...grid.reverse().map((row) => row.join('')))
     }
 
-    result.set(file.name, extractedFile)
+    if (file.name.match(/LF[0-9]{2} M[0-9]{6}/)) {
+      result.set(file.name, getProductDetails(gridFile))
+    }
+
+    if (file.name.match(/[0-9]{2}-PZ [0-9]{4}[A-Z]{2,}/)) {
+      result.set(file.name, gridFile)
+    }
   }
   return result
 }
@@ -134,7 +106,7 @@ async function extractDataFromPDF(files: FileList): Promise<Map<string, string[]
       type="file"
       name="file-upload"
       id="file-upload"
-      class=""
+      class="button"
       multiple
       @change="addItemsFromFiles"
       hidden
@@ -142,4 +114,11 @@ async function extractDataFromPDF(files: FileList): Promise<Map<string, string[]
   </main>
 </template>
 
-<style scoped></style>
+<style scoped>
+.button {
+  background-color: steelblue;
+  color: white;
+  padding: 5px 8px;
+  border-radius: 5px;
+}
+</style>
