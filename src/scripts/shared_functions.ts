@@ -1,8 +1,8 @@
 const regExp_ItemSize: RegExp = /\b\d+x\d+x\d+\b/i // 12x1250x2500
 // const regExp_ContarctNo: RegExp = /\b(Contract)\b/i
-const regExp_ItemPacking: RegExp = /\b([0-9]+([,.][0-9]+)? cbm)\b/i
+const regExp_ItemPacking: RegExp = /\b([0-9]+([,.][0-9]+)? (cbm|sqr|pcs|m3|m2|szt))\b/i
 const regExp_ItemGlueing: RegExp = /\b(EXT|WD|INT|MR)\b/i
-const regExp_ItemDescription: RegExp = /\b(Birch plywood|EXT|WD|INT|MR)\b/i
+const regExp_ItemDescription: RegExp = /\b(Birch plywood|KILO|PQ)\b/i
 
 export const charMap: { [key: string]: string } = {
   ą: 'ą',
@@ -35,6 +35,8 @@ export interface LabelInterface {
 }
 
 export function getProductDetails(items: string[]): string[] {
+  // console.log(items)
+
   const result = []
   const itemsLength = items.length
   let itemSize: string = ''
@@ -83,7 +85,7 @@ function getPurifiedDescription(input: string | null): string {
     if (text.match(/(edges sealed|Const|Spec|441233\d\d|\(1\)\(2\)|RAL|EXT|WD|INT|MR)/i)) continue
     // Erase junk words
     text = text
-      .replace(/\b(Birch plywood RIGA|MEL|TEX|FORM|PLY|COMPOSITE)\b/gi, '')
+      // .replace(/\b(Birch plywood RIGA|MEL|TEX|FORM|PLY|COMPOSITE)\b/gi, '')
       .replace(/\b(CODE|WPC|SP1|1F45M|R7010|without|\d{5,})\b/gi, '')
       .trim()
     purifiedName.push(text)
@@ -108,16 +110,34 @@ function getItemGlueing(input: string): string {
 
 /**-------------------------------------------------------- */
 
-export function getUnifiedProductDetails(input: string[]): string[] {
-  return input
+export function getUnifiedProductDetails(array: string[]): string[] {
+  const result = []
+  for (let i = 0; i < array.length; i++) {
+    const size = getSize(array[i])
+    const glue = getGlueType(array[i])
+    const face = getFaceType(array[i])
+    const color = getColor(array[i], face)
+    const quant = getQuantity(array[i])
+    if (size && face) {
+      result.push(`${glue} ${size} ${face} ${color}`)
+    }
+  }
+  // console.log(result)
+
+  return result
 }
 
-export function getSize(input: string): string | undefined {
+function getQuantity(input: string): string | undefined {
+  const match = input.match(/([0-9]+([,.][0-9]+){1})/)
+  return match ? match[0].replace(/,/g, '.') : undefined
+}
+
+function getSize(input: string): string | undefined {
   const match = input.match(/\d+([,.]\d+)?x\d{2,4}x\d{2,4}/i)
   return match ? match[0].replace(/,/g, '.') : undefined
 }
 
-export function getGlueType(text: string): string | undefined {
+function getGlueType(text: string): string | undefined {
   let result = undefined
   if (/sucho|\bMR\b|\bINT\b/g.test(text)) result = 'MR'
   if (/wodo|\bWD\b|\bEXT\b|\bE\b/g.test(text)) result = 'WD'
@@ -126,7 +146,7 @@ export function getGlueType(text: string): string | undefined {
   return result
 }
 
-export function getFaceType(text: string): string | undefined {
+function getFaceType(text: string): string | undefined {
   let result = undefined
 
   const regexpGrade = /\b(S|B|BB|CP|WG|WGE|C|CC|V|M|F|W)\b/
@@ -150,7 +170,7 @@ export function getFaceType(text: string): string | undefined {
   /*1*/ if (/s11\//gi.test(text)) result = 'Kilo'
   /*1*/ if (/s12\/|s13\/|FORM/gi.test(text)) result = 'F/F' // II applied in *4*
   /*1*/ if (/s14\/|s15\/|TEX|MESH|DIAMOND|TRANS|RHOMB/gi.test(text)) result = 'F/W' // II applied in *4*
-  /*1*/ if (/s16\/|s17\/|TEX|MESH|DIAMOND|TRANS|RHOMB/gi.test(text)) result = 'W/W' // II applied in *4*
+  /*1*/ if (/s16\/|s17\//gi.test(text)) result = 'W/W' // II applied in *4*
   /*1*/ if (/s18\//gi.test(text)) result = 'CP/C'
   /*1*/ if (/s19\//gi.test(text)) result = 'M/WG'
   /*1*/ if (/s20\//gi.test(text)) result = 'F/BB'
@@ -181,12 +201,12 @@ export function getFaceType(text: string): string | undefined {
   /*3*/ if (/OSB/gi.test(text)) result = 'OSB'
 
   /*4*/ // !important Apply II grade at the end
-  /*4*/ if (/s13\/|s15\/|s17\//gi.test(text)) result += ' II'
+  /*4*/ if (/s13\/|s15\/|s17\/||((WT|FA|MA|W|F|M) II)/gi.test(text)) result += ' II'
 
   return result
 }
 
-export function getColor(text: string, faceType: string | undefined): string | undefined {
+function getColor(text: string, faceType: string | undefined): string | undefined {
   const results = new Set()
 
   if (/\bhoney\b/gi.test(text)) results.add('honey')
@@ -197,7 +217,7 @@ export function getColor(text: string, faceType: string | undefined): string | u
   if (/\bred\b|czerwon[ya]/gi.test(text)) results.add('red')
   if (/(?<!(opal ?))(white)/gi.test(text)) results.add('white')
   if (/(?<=(opal ?))(white)/gi.test(text)) results.add('opal white')
-  if (/c\.less|trans|bezbarwna/gi.test(text)) results.add('c.less')
+  if (/c\.less|trans|bezbarwna|colorless/gi.test(text)) results.add('c.less')
   if (/(?<!(l\. ?|jasn[yoa] ?|light ?))(grey|szar[ya])/gi.test(text)) results.add('grey')
   if (/(?<=(l\. ?|jasn[yoa] ?|light ?))(grey|szar[ya])/gi.test(text)) results.add('l.grey')
   if (/(?<=(l\. ?|jasn[yoa] ?|light ?))(br|brąz|brown)/gi.test(text)) results.add('l.brown')
