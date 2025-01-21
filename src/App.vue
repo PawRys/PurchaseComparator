@@ -166,13 +166,13 @@ async function extractTextFromPDF(files: FileList) {
       multiple
       @change="compareFiles"
       hidden
+      style="display: none"
     />
 
     <section>
       <h3 v-if="results && results.length === 0">Wszystko git</h3>
       <div v-for="item in results" :key="item" v-html="item"></div>
     </section>
-    <!-- <pre>{{ results }}</pre> -->
   </main>
 
   <footer>

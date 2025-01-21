@@ -1,86 +1,284 @@
-/* color palette from <https://github.com/vuejs/theme> */
 :root {
-  --vt-c-white: #ffffff;
-  --vt-c-white-soft: #f8f8f8;
-  --vt-c-white-mute: #f2f2f2;
+  --accent-palette-100: rgb(236, 241, 251);
+  --accent-palette-150: rgb(216, 227, 247);
+  --accent-palette-200: rgb(197, 213, 244);
+  --accent-palette-250: rgb(178, 200, 240);
+  --accent-palette-300: rgb(158, 186, 236);
+  --accent-palette-350: rgb(139, 172, 232);
+  --accent-palette-400: rgb(119, 158, 229);
+  --accent-palette-450: rgb(100, 144, 225);
+  --accent-palette-500: rgb(88, 126, 197);
+  --accent-palette-550: rgb(75, 108, 169);
+  --accent-palette-600: rgb(63, 90, 141);
+  --accent-palette-650: rgb(50, 72, 112);
+  --accent-palette-700: rgb(38, 54, 84);
+  --accent-palette-750: rgb(25, 36, 56);
+  --accent-palette-800: rgb(13, 18, 28);
 
-  --vt-c-black: #181818;
-  --vt-c-black-soft: #222222;
-  --vt-c-black-mute: #282828;
+  --neutral-palette-100: rgb(255, 255, 255);
+  --neutral-palette-150: rgb(239, 239, 241);
+  --neutral-palette-200: rgb(222, 224, 226);
+  --neutral-palette-250: rgb(206, 208, 212);
+  --neutral-palette-300: rgb(190, 193, 198);
+  --neutral-palette-350: rgb(173, 177, 183);
+  --neutral-palette-400: rgb(157, 161, 169);
+  --neutral-palette-450: rgb(140, 146, 154);
+  --neutral-palette-500: rgb(124, 130, 140);
+  --neutral-palette-550: rgb(109, 114, 123);
+  --neutral-palette-600: rgb(93, 98, 105);
+  --neutral-palette-650: rgb(78, 81, 88);
+  --neutral-palette-700: rgb(62, 65, 70);
+  --neutral-palette-750: rgb(46, 49, 53);
+  --neutral-palette-800: rgb(31, 33, 35);
+  --neutral-palette-850: rgb(15, 16, 18);
+  --neutral-palette-900: rgb(0, 0, 0);
 
-  --vt-c-indigo: #2c3e50;
+  --radius-full: 100vmax;
+  --radius-big: 1.5ch;
+  --radius-mid: 1ch;
+  --radius-small: 0.5ch;
+  --very-fast: 150ms;
+  --fast: 250ms;
 
-  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
-  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
+  --bg-color: var(--neutral-palette-100);
+  --bg2-color: var(--accent-palette-100);
+  --font-color: var(--neutral-palette-800);
+  --font-color-inv: var(--accent-palette-100);
+  --accent-lightest: var(--accent-palette-100);
+  --accent-lighter: var(--accent-palette-150);
+  --accent-light: var(--accent-palette-250);
+  --cta-color: var(--accent-palette-450);
 
-  --vt-c-text-light-1: var(--vt-c-indigo);
-  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-  --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+  --red-color: crimson;
+  --green-color: limegreen;
+  --blue-color: dodgerblue;
+  --grey-color: darkgray;
 }
-
-/* semantic color variables for this project */
-:root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
-
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
-
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
-
-  --section-gap: 160px;
-}
-
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
+    font-weight: 500;
+    --bg-color: var(--neutral-palette-750);
+    --bg2-color: var(--neutral-palette-800);
+    --font-color: var(--neutral-palette-100);
+    --font-color-inv: var(--accent-palette-700);
+    --accent-lightest: var(--accent-palette-700);
+    --accent-lighter: var(--accent-palette-650);
+    --accent-light: var(--accent-palette-600);
+    --cta-color: var(--accent-palette-450);
 
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
+    --red-color: tomato;
+    --green-color: lawngreen;
+    --blue-color: dodgerblue;
+    --grey-color: darkgray;
   }
 }
 
 *,
-*::before,
-*::after {
+*::after,
+*::before {
   box-sizing: border-box;
-  margin: 0;
+  position: relative;
+  line-height: inherit;
   /* font: inherit; */
 }
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-light) var(--bg-color);
+}
+
+:focus {
+  outline-color: orange;
+}
+
 body {
+  color: var(--font-color);
+  background-color: var(--bg-color);
+  font-family: 'Rajdhani', sans-serif;
+  /* font-family: 'Barlow', sans-serif; */
+  /* font-family: 'Barlow Semi Condensed', sans-serif; */
+
+  font-size: 112%;
+  color-scheme: light dark;
+}
+
+@media (max-width: 500px) {
+  body {
+    font-size: 122%;
+  }
+}
+
+#app {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   min-height: 100vh;
-  color: var(--color-text);
-  background: var(--color-background);
-  transition:
-    color 0.5s,
-    background-color 0.5s;
-  line-height: 1.6;
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    Oxygen,
-    Ubuntu,
-    Cantarell,
-    'Fira Sans',
-    'Droid Sans',
-    'Helvetica Neue',
-    sans-serif;
-  font-size: 15px;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  min-height: 100svh;
+
+  margin: auto;
+  /* padding: 1ch; */
+  width: min(100%, 70ch);
+}
+
+hr {
+  border: none;
+  border-top: solid 1px var(--accent-lightest);
+  width: 100%;
+}
+
+:is(button, .button) {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.8ch;
+
+  margin: 1px;
+  border: none;
+  border-radius: 0.6ch;
+  padding: 1ch 1.6ch;
+  width: max-content;
+  min-height: 4ch;
+
+  color: var(--font-color);
+  background-color: var(--bg2-color);
+  /* background-color: var(--accent-lightest); */
+  line-height: 1;
+
+  /* transition-property: color, background-color, box-shadow, filter; */
+  /* transition-duration: var(--very-fast); */
+}
+
+:is(button, .button):active {
+  filter: contrast(0.8);
+}
+
+:is(button, .button).compact {
+  padding: 0.5ch 1ch;
+  min-height: 3ch;
+  background-color: var(--bg-color);
+}
+
+:is(button, .button).transparent {
+  background-color: var(--bg-color);
+}
+
+:is(button, .button).cta {
+  color: var(--font-color-inv);
+  background-color: var(--cta-color);
+}
+:is(button, .button).switch {
+  box-shadow: inset 0 0 0 1px var(--accent-light);
+  background-color: var(--bg-color);
+}
+:is(button, .button).switch:is(:has(:checked), .active) {
+  box-shadow: inset 0 0 0px 2px var(--accent-light);
+  background-color: var(--accent-light);
+  font-weight: 700;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :is(button, .button, select):hover:not(:disabled) {
+    background-color: var(--accent-light);
+    color: var(--font-color);
+    filter: hue-rotate(180deg);
+  }
+}
+
+:is(button, .button):disabled {
+  filter: contrast(0.8) opacity(0.5);
+  cursor: default;
+}
+
+/******************************************************************************/
+
+input,
+select,
+option,
+textarea,
+[contenteditable='true'] {
+  border-radius: 0.6ch;
+  border: none;
+  background-color: var(--bg-color);
+  accent-color: var(--accent-light);
+  padding-block: 0;
+}
+
+input,
+option,
+textarea,
+[contenteditable='true'] {
+  border: dashed 1px var(--accent-lighter);
+}
+
+dialog {
+  position: fixed;
+  width: min(100%, 45ch);
+  max-width: fit-content;
+  border: solid 1px var(--bg2-color);
+  background-color: var(--bg-color);
+  color: var(--font-color);
+}
+
+dialog > header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+dialog::backdrop {
+  backdrop-filter: blur(4px);
+}
+
+/** div.dialog **/
+.dialog-backdrop {
+  position: fixed;
+  z-index: 999999;
+  inset: 0;
+
+  display: grid;
+  place-items: center;
+  backdrop-filter: blur(4px);
+}
+
+.dialog {
+  display: grid;
+
+  padding: 1ch;
+  padding-bottom: 3ch;
+  border: solid 1px var(--bg2-color);
+  width: min(45ch, 100%);
+  background-color: var(--bg-color);
+  text-align: center;
+}
+
+.dialog > header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/******************************************************************************/
+.grey-font {
+  color: var(--grey-color);
+}
+.blue-font {
+  color: var(--blue-color);
+}
+.red-font {
+  color: var(--red-color);
+}
+.green-font {
+  color: var(--green-color);
+}
+
+.bold {
+  font-weight: 600;
+}
+
+.toolbar {
+  display: flex;
+  gap: 0.8ch;
+
+  padding: 0.8ch;
+  border-radius: 0.8ch;
+  width: fit-content;
+  background-color: var(--bg2-color);
 }
