@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host"
+    "dev": "vite --host",
+    "build-deploy": "vite build && gh-pages -d dist"
   },
   "scripts-off": {
     "build": "run-p type-check \"build-only {@}\" --",

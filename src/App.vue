@@ -3,6 +3,9 @@ import * as pdfjsLib from 'pdfjs-dist'
 import 'pdfjs-dist/build/pdf.worker.min.mjs'
 import type { TextItem } from 'pdfjs-dist/types/src/display/api'
 import { charMap, getProductDetails, getUnifiedProductDetails } from '@/scripts/shared_functions'
+import { ref } from 'vue'
+
+const results = ref()
 
 const correctText = (input: string): string => {
   return input
@@ -22,27 +25,44 @@ async function compareFiles(event: Event): Promise<void> {
   const target = event.target as HTMLInputElement
   const pdfFiles = target.files as FileList
   const textFiles = await extractTextFromPDF(pdfFiles)
-  // console.log(textFiles)
   const compared = compareTextFiles(textFiles)
-  console.log(compared)
+  // console.log(compared)
+  results.value = compared
 }
 
-function compareTextFiles(textFiles: {
-  invoice: Map<string, string[]>
-  PZ: Map<string, string[]>
-}) {
+function compareTextFiles(textFiles: { LF: Map<string, string[]>; PZ: Map<string, string[]> }) {
   const compare = []
-  for (const [invoiceNo, products] of textFiles.invoice) {
-    const LF = textFiles.invoice.get(invoiceNo) || []
+  for (const [invoiceNo, products] of textFiles.LF) {
+    const LF = textFiles.LF.get(invoiceNo) || []
     const PZ = textFiles.PZ.get(invoiceNo) || []
 
     for (let index = 0; index < products.length; index++) {
       let x = '✔️'
       if (LF[index] !== PZ[index]) x = '❌'
-      compare.push(`${x} ${invoiceNo} -- ${LF[index]} / ${PZ[index]}`)
+      if (x === '❌') {
+        const dif = removeDuplicates(LF[index], PZ[index])
+        const str = `${x} ${invoiceNo}\n${LF[index]}\n${PZ[index]}`
+        compare.push(boldDiffers(str, dif))
+      }
     }
   }
   return compare
+}
+
+function removeDuplicates(str1: string, str2: string) {
+  const arr1 = (str1 || '').split(/[  ]+/)
+  const arr2 = (str2 || '').split(/[  ]+/)
+  const set1 = new Set(arr1)
+  const set2 = new Set(arr2)
+  const uniqueArr1 = arr1.filter((item) => !set2.has(item))
+  const uniqueArr2 = arr2.filter((item) => !set1.has(item))
+  return [...uniqueArr1, ...uniqueArr2].sort().reverse()
+}
+
+function boldDiffers(str: string, dif: string[]) {
+  const pattern = `(${dif.join('|').replace(/[.*+?^${}()]/g, '\\$&')})`
+  const regex = new RegExp(pattern, 'g')
+  return str.replace(regex, '<b>$1</b>')
 }
 
 async function extractTextFromPDF(files: FileList) {
@@ -126,7 +146,7 @@ async function extractTextFromPDF(files: FileList) {
       PZ.set(`${invoiceNo}`, productsToCompare)
     }
   }
-  return { invoice: LF, PZ: PZ }
+  return { LF: LF, PZ: PZ }
 }
 </script>
 
@@ -144,7 +164,26 @@ async function extractTextFromPDF(files: FileList) {
       @change="compareFiles"
       hidden
     />
+
+    <section>
+      <h3 v-if="results && results.length === 0">Wszystko git</h3>
+      <div v-for="item in results" :key="item" v-html="item"></div>
+    </section>
+    <!-- <pre>{{ results }}</pre> -->
   </main>
+
+  <footer>
+    <p>Wszelkie prawa zastrzeżone - Paweł Ryszkowski</p>
+    <p>
+      Uwagi i pomoc techniczna:
+      <a href="mailto:pawrys.kontakt@gmail.com?subject=Pomoc%20Tester%20Przyjec" target="_blank"
+        >pawrys.kontakt@gmail.com</a
+      >
+      <span> - </span>
+      <a href="https://github.com/PawRys/">Github/PawRys</a>
+    </p>
+    <p></p>
+  </footer>
 </template>
 
 <style scoped>
@@ -153,5 +192,14 @@ async function extractTextFromPDF(files: FileList) {
   color: white;
   padding: 5px 8px;
   border-radius: 5px;
+}
+
+div {
+  margin-block: 1em;
+  white-space: break-spaces;
+}
+
+b {
+  color: brown;
 }
 </style>

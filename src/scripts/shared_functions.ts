@@ -112,14 +112,15 @@ function getItemGlueing(input: string): string {
 
 export function getUnifiedProductDetails(array: string[]): string[] {
   const result = []
+  let counter = 0
   for (let i = 0; i < array.length; i++) {
     const size = getSize(array[i])
     const glue = getGlueType(array[i])
     const face = getFaceType(array[i])
     const color = getColor(array[i], face)
     const quant = getQuantity(array[i])
-    if (size && face) {
-      result.push(`${glue} ${size} ${face} ${color}`)
+    if (size && !array[i].match(/Pozycja [0-9]{1,}/)) {
+      result.push(`${++counter}. ${glue} ${size} ${face} ${color} - ${Number(quant)}`)
     }
   }
   // console.log(result)
@@ -128,8 +129,9 @@ export function getUnifiedProductDetails(array: string[]): string[] {
 }
 
 function getQuantity(input: string): string | undefined {
-  const match = input.match(/([0-9]+([,.][0-9]+){1})/)
-  return match ? match[0].replace(/,/g, '.') : undefined
+  const match = input.match(/([0-9]+([,.][0-9]+){1}) (cbm|sqr|pcs|m3|m2|szt)/)
+  const match_2 = match ? match[0].match(/([0-9]+([,.][0-9]+){1})/) : undefined
+  return match_2 ? match_2[0].replace(/,/g, '.') : undefined
 }
 
 function getSize(input: string): string | undefined {
@@ -201,7 +203,7 @@ function getFaceType(text: string): string | undefined {
   /*3*/ if (/OSB/gi.test(text)) result = 'OSB'
 
   /*4*/ // !important Apply II grade at the end
-  /*4*/ if (/s13\/|s15\/|s17\/||((WT|FA|MA|W|F|M) II)/gi.test(text)) result += ' II'
+  /*4*/ if (/s13\/|s15\/|s17\/|((WT|FA|MA|W|F|M) II)/gi.test(text)) result += ' II'
 
   return result
 }
@@ -217,7 +219,7 @@ function getColor(text: string, faceType: string | undefined): string | undefine
   if (/\bred\b|czerwon[ya]/gi.test(text)) results.add('red')
   if (/(?<!(opal ?))(white)/gi.test(text)) results.add('white')
   if (/(?<=(opal ?))(white)/gi.test(text)) results.add('opal white')
-  if (/c\.less|trans|bezbarwna|colorless/gi.test(text)) results.add('c.less')
+  if (/c\.less|transp|bezbarwna|colorless/gi.test(text)) results.add('c.less')
   if (/(?<!(l\. ?|jasn[yoa] ?|light ?))(grey|szar[ya])/gi.test(text)) results.add('grey')
   if (/(?<=(l\. ?|jasn[yoa] ?|light ?))(grey|szar[ya])/gi.test(text)) results.add('l.grey')
   if (/(?<=(l\. ?|jasn[yoa] ?|light ?))(br|brąz|brown)/gi.test(text)) results.add('l.brown')
