@@ -173,6 +173,10 @@ async function extractTextFromPDF(files: FileList) {
   </main>
 
   <footer>
+    <p>
+      <a href="https://pawrys.github.io/StockBrowser5/">Stany 5</a>
+    </p>
+
     <p>Wszelkie prawa zastrzeżone - Paweł Ryszkowski</p>
     <p>
       Uwagi i pomoc techniczna:
