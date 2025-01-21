@@ -151,7 +151,10 @@ async function extractTextFromPDF(files: FileList) {
 </script>
 
 <template>
-  <header></header>
+  <header>
+    <h1>Tester przyjęć</h1>
+    <p>Narzędzie do porównywania PZ z fakturą</p>
+  </header>
 
   <main>
     <div class="button-bar"><label for="file-upload" class="button cta">Dodaj pliki</label></div>
