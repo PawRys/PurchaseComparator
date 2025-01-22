@@ -32,16 +32,23 @@ async function compareFiles(event: Event): Promise<void> {
 
 function compareTextFiles(textFiles: { LF: Map<string, string[]>; PZ: Map<string, string[]> }) {
   const compare = []
-  for (const [invoiceNo, products] of textFiles.LF) {
-    const LF = textFiles.LF.get(invoiceNo) || []
-    const PZ = textFiles.PZ.get(invoiceNo) || []
+  const invoiceList = new Set([...textFiles.LF.keys(), ...textFiles.PZ.keys()])
 
-    for (let index = 0; index < products.length; index++) {
+  for (const invoiceNo of invoiceList) {
+    const LF = textFiles.LF.get(invoiceNo)
+    const PZ = textFiles.PZ.get(invoiceNo)
+    const allItems = new Set([...(LF || []), ...(PZ || [])])
+
+    for (let index = 0; index < allItems.size; index++) {
       let x = '✔️'
-      if (LF[index] !== PZ[index]) x = '❌'
+      const LF_item = LF ? LF[index] : 'Brak dokumentu LF invoice'
+      const PZ_item = PZ ? PZ[index] : 'Brak dokumentu PZ'
+      if (LF_item !== PZ_item) {
+        x = '❌'
+      }
       if (x === '❌') {
-        const dif = removeDuplicates(LF[index], PZ[index])
-        const str = `${x} ${invoiceNo}\n${LF[index]}\n${PZ[index]}`
+        const dif = removeDuplicates(LF_item, PZ_item)
+        const str = `${x} ${invoiceNo}\n${LF_item}\n${PZ_item}`
         compare.push(boldDiffers(str, dif))
       }
     }
@@ -50,8 +57,8 @@ function compareTextFiles(textFiles: { LF: Map<string, string[]>; PZ: Map<string
 }
 
 function removeDuplicates(str1: string, str2: string) {
-  const arr1 = (str1 || '').split(/[  ]+/)
-  const arr2 = (str2 || '').split(/[  ]+/)
+  const arr1 = (str1 || '').replace(/x[0-9]+x/g, ' $& ').split(/[  ]+/)
+  const arr2 = (str2 || '').replace(/x[0-9]+x/g, ' $& ').split(/[  ]+/)
   const set1 = new Set(arr1)
   const set2 = new Set(arr2)
   const uniqueArr1 = arr1.filter((item) => !set2.has(item))
