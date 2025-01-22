@@ -159,8 +159,21 @@ async function extractTextFromPDF(files: FileList) {
 
 <template>
   <header>
+    <p>
+      <a href="https://pawrys.github.io/StockBrowser5/">Stany</a>
+      <span> / </span>
+      <a href="https://pawrys.github.io/LabelGenerator/">Etykiety</a>
+      <span> / </span>
+      <a href="https://pawrys.github.io/PurchaseComparator/">Tester</a>
+    </p>
+
     <h1>Tester przyjęć</h1>
-    <p>Narzędzie do porównywania PZ z fakturą</p>
+    <p>Narzędzie do porównywania PZ z fakturą LF.</p>
+    <p>
+      PDF z naszym PZ musi zawierać <b>dokładny numer faktury z LF</b>, oraz ustawione w opcjach
+      wydruku <b>kod towaru obok nazwy towaru</b>. Można zaznaczyć i "wgrać" wiele plików
+      jednocześnie.
+    </p>
   </header>
 
   <main>
@@ -183,10 +196,6 @@ async function extractTextFromPDF(files: FileList) {
   </main>
 
   <footer>
-    <p>
-      <a href="https://pawrys.github.io/StockBrowser5/">Stany 5</a>
-    </p>
-
     <p>Wszelkie prawa zastrzeżone - Paweł Ryszkowski</p>
     <p>
       Uwagi i pomoc techniczna:
