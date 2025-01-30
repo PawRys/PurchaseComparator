@@ -6,6 +6,7 @@ import { charMap, getProductDetails, getUnifiedProductDetails } from '@/scripts/
 import { ref } from 'vue'
 
 const results = ref()
+const isWorking = ref('')
 
 const correctText = (input: string): string => {
   return input
@@ -22,15 +23,19 @@ const getInvoiceNo = (gridFile: string[]): string | undefined => {
 }
 
 async function compareFiles(event: Event): Promise<void> {
+  isWorking.value = 'Pracuję'
   const target = event.target as HTMLInputElement
   const pdfFiles = target.files as FileList
   const textFiles = await extractTextFromPDF(pdfFiles)
-  const compared = compareTextFiles(textFiles)
-  // console.log(compared)
+  const compared = await compareTextFiles(textFiles)
   results.value = compared
+  isWorking.value = 'Zrobione'
 }
 
-function compareTextFiles(textFiles: { LF: Map<string, string[]>; PZ: Map<string, string[]> }) {
+async function compareTextFiles(textFiles: {
+  LF: Map<string, string[]>
+  PZ: Map<string, string[]>
+}) {
   const compare = []
   const invoiceList = new Set([...textFiles.LF.keys(), ...textFiles.PZ.keys()])
 
@@ -177,7 +182,12 @@ async function extractTextFromPDF(files: FileList) {
   </header>
 
   <main>
-    <div class="button-bar"><label for="file-upload" class="button cta">Dodaj pliki</label></div>
+    <div class="button-bar">
+      <label for="file-upload" class="button cta">
+        <span>Dodaj pliki</span>
+      </label>
+      <span class="isWorking">{{ isWorking }}</span>
+    </div>
     <input
       type="file"
       name="file-upload"
@@ -210,6 +220,12 @@ async function extractTextFromPDF(files: FileList) {
 </template>
 
 <style scoped>
+.button-bar {
+  align-items: baseline;
+  display: flex;
+  gap: 1em;
+}
+
 .button {
   background-color: steelblue;
   color: white;
