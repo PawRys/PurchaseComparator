@@ -233,9 +233,9 @@ function getColor(text: string, faceType: string | undefined): string | undefine
     if (faceType?.match('W/W')) results.add('d.brown')
     if (faceType?.match('Heksa')) results.add('d.brown')
     if (faceType?.match('M/M')) results.add('white')
-    if (faceType?.match('Poliform')) results.add('(nieznany)')
-    if (faceType?.match('PPL')) results.add('(nieznany)')
-    if (faceType?.match('PQF')) results.add('(nieznany)')
+    // if (faceType?.match('Poliform')) results.add('(nieznany)')
+    // if (faceType?.match('PPL')) results.add('(nieznany)')
+    // if (faceType?.match('PQF')) results.add('(nieznany)')
   }
 
   // if (results.size === 0 && faceType) results.add('(brak)')
