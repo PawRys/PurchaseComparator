@@ -44,17 +44,26 @@ async function compareTextFiles(textFiles: {
     const PZ = textFiles.PZ.get(invoiceNo)
     const allItems = new Set([...(LF || []), ...(PZ || [])])
 
+    console.log(allItems, LF, PZ)
+
     for (let index = 0; index < allItems.size; index++) {
       let x = '✔️'
       const LF_item = LF ? LF[index] : 'Brak dokumentu LF invoice'
       const PZ_item = PZ ? PZ[index] : 'Brak dokumentu PZ'
+      if (!LF_item && !PZ_item) {
+        continue
+      }
       if (LF_item !== PZ_item) {
         x = '❌'
       }
+      if (x === '✔️') {
+        const str = `${x} <i>${invoiceNo}</i> \n\t${LF_item}\n\t${PZ_item}`
+        compare.push(str)
+      }
       if (x === '❌') {
         const dif = removeDuplicates(LF_item, PZ_item)
-        const str = `${x} ${invoiceNo}\n${LF_item}\n${PZ_item}`
-        compare.push(boldDiffers(str, dif))
+        const str = `\n\t${LF_item}\n\t${PZ_item}`
+        compare.push(`${x} <i>${invoiceNo}</i> ${boldDiffers(str, dif)}`)
       }
     }
   }
@@ -172,7 +181,7 @@ async function extractTextFromPDF(files: FileList) {
       <a href="https://pawrys.github.io/PurchaseComparator/">Tester</a>
     </p>
 
-    <h1>Tester przyjęć</h1>
+    <h1>Tester PZ</h1>
     <p>Narzędzie do porównywania PZ z fakturą LF.</p>
     <p>
       PDF z naszym PZ musi zawierać <b>dokładny numer faktury z LF</b>, oraz ustawione w opcjach
@@ -201,7 +210,17 @@ async function extractTextFromPDF(files: FileList) {
 
     <section>
       <h3 v-if="results && results.length === 0">Wszystko git</h3>
-      <div v-for="item in results" :key="item" v-html="item"></div>
+      <label v-if="results" for="valid_items" class="show-valid">
+        <input type="checkbox" name="valid_items" id="valid_items" />
+        <span>Pokaż prawidłowe</span>
+      </label>
+
+      <div
+        v-for="item in results"
+        :key="item"
+        v-html="item"
+        :class="{ valid: item.match('✔️'), invalid: item.match('❌') }"
+      ></div>
     </section>
   </main>
 
@@ -231,6 +250,20 @@ async function extractTextFromPDF(files: FileList) {
   color: white;
   padding: 5px 8px;
   border-radius: 5px;
+}
+
+.show-valid {
+  cursor: pointer;
+  display: flex;
+  gap: 1em;
+}
+
+.show-valid ~ .valid {
+  display: none;
+}
+
+.show-valid:has(:checked) ~ .valid {
+  display: revert;
 }
 
 div {
