@@ -186,13 +186,14 @@ function getFaceType(text: string): string | undefined {
   /*1*/ if (/s29\//gi.test(text)) result = 'S/CP'
   /*1*/ if (/s30\//gi.test(text)) result = 'V/V'
   /*1*/ if (/s31\//gi.test(text)) result = 'OSB3'
-  /*1*/ if (/s32\//gi.test(text)) result = 'OSB T&G'
+  /*1*/ if (/s32\//gi.test(text)) result = 'OSB T&G'
   /*1*/ if (/s35\//gi.test(text)) result = 'BB/CC'
 
   /*2.1*/ if (/\bkilo\b/gi.test(text)) result = 'Kilo'
   /*2.2*/ if (/\bPQ\b/gi.test(text)) result = 'PQ'
   /*2.3*/ if (/\bPQ\W?F\b/gi.test(text)) result = 'PQF'
   /*3*/ if (/\bF\/W\W?H\b|Heksa/gi.test(text)) result = 'Heksa'
+  /*3*/ if (/\bF\/W\W?H+\b|Heksa+|Heksa Plus/gi.test(text)) result = 'Heksa Plus'
   /*3*/ if (/\bM\/M\b|MEL|\bopal white\b/gi.test(text)) result = 'M/M'
   // /*3*/ if (/\bhoney\b/gi.test(text)) result = 'Honey'
   // /*3*/ if (/\bM\/M\b|mel/gi.test(text)) result = 'M/M'
@@ -203,7 +204,7 @@ function getFaceType(text: string): string | undefined {
   /*3*/ if (/OSB/gi.test(text)) result = 'OSB'
 
   /*4*/ // !important Apply II grade at the end
-  /*4*/ if (/s13\/|s15\/|s17\/|((WT|FA|MA|W|F|M) II)/gi.test(text)) result += ' II'
+  /*4*/ if (/s13\/|s15\/|s17\/|((WT|FA|MA|W|F|M) II)/gi.test(text)) result += ' II'
 
   return result
 }

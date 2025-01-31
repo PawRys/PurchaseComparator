@@ -6,6 +6,7 @@ import { charMap, getProductDetails, getUnifiedProductDetails } from '@/scripts/
 import { ref } from 'vue'
 
 const results = ref()
+const invalid = ref(0)
 const isWorking = ref('')
 
 const correctText = (input: string): string => {
@@ -36,6 +37,7 @@ async function compareTextFiles(textFiles: {
   LF: Map<string, string[]>
   PZ: Map<string, string[]>
 }) {
+  invalid.value = 0
   const compare = []
   const invoiceList = new Set([...textFiles.LF.keys(), ...textFiles.PZ.keys()])
 
@@ -64,6 +66,7 @@ async function compareTextFiles(textFiles: {
         const dif = removeDuplicates(LF_item, PZ_item)
         const str = `\n\t${LF_item}\n\t${PZ_item}`
         compare.push(`${x} <i>${invoiceNo}</i> ${boldDiffers(str, dif)}`)
+        invalid.value++
       }
     }
   }
@@ -209,7 +212,11 @@ async function extractTextFromPDF(files: FileList) {
     />
 
     <section>
-      <h3 v-if="results && results.length === 0">Wszystko git</h3>
+      <h3 v-if="!results">Załaduj parami PZ + LF invoice</h3>
+      <h3 v-if="results && invalid === 0">Wszystko git</h3>
+      <h3 v-if="results && invalid > 0">
+        Znaleziono {{ invalid }} błędów na {{ results.length }} pozycji.
+      </h3>
       <label v-if="results" for="valid_items" class="show-valid">
         <input type="checkbox" name="valid_items" id="valid_items" />
         <span>Pokaż prawidłowe</span>
