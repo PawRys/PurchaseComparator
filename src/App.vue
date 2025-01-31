@@ -228,7 +228,7 @@ async function extractTextFromPDF(files: FileList) {
     <p>Wszelkie prawa zastrzeżone - Paweł Ryszkowski</p>
     <p>
       Uwagi i pomoc techniczna:
-      <a href="mailto:pawrys.kontakt@gmail.com?subject=Pomoc%20Tester%20Przyjec" target="_blank"
+      <a href="mailto:pawrys.kontakt@gmail.com?subject=Pomoc%20Tester%20PZ" target="_blank"
         >pawrys.kontakt@gmail.com</a
       >
       <span> - </span>
