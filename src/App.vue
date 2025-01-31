@@ -50,8 +50,8 @@ async function compareTextFiles(textFiles: {
 
     for (let index = 0; index < allItems.size; index++) {
       let x = '✔️'
-      const LF_item = LF ? LF[index] : 'Brak dokumentu LF invoice'
-      const PZ_item = PZ ? PZ[index] : 'Brak dokumentu PZ'
+      const LF_item = LF ? LF[index] : 'Brak_dokumentu_LF_invoice'
+      const PZ_item = PZ ? PZ[index] : 'Brak_dokumentu_PZ'
       if (!LF_item && !PZ_item) {
         continue
       }
@@ -74,8 +74,8 @@ async function compareTextFiles(textFiles: {
 }
 
 function removeDuplicates(str1: string, str2: string) {
-  const arr1 = (str1 || '').replace(/x[0-9]+x/g, ' $& ').split(/[ ]+/)
-  const arr2 = (str2 || '').replace(/x[0-9]+x/g, ' $& ').split(/[ ]+/)
+  const arr1 = (str1 || '').replace(/x[0-9]+x/g, ' $& ').split(/[  ]+/)
+  const arr2 = (str2 || '').replace(/x[0-9]+x/g, ' $& ').split(/[  ]+/)
   const set1 = new Set(arr1)
   const set2 = new Set(arr2)
   const uniqueArr1 = arr1.filter((item) => !set2.has(item))
@@ -86,7 +86,7 @@ function removeDuplicates(str1: string, str2: string) {
 function boldDiffers(str: string, dif: string[]) {
   const pattern = `(${dif.join('|').replace(/[.*+?^${}()]/g, '\\$&')})`
   const regex = new RegExp(pattern, 'g')
-  return str.replace(regex, '<b>$1</b>')
+  return str.replace(regex, '<b>$1</b>').replace(/_/g, ' ')
 }
 
 async function extractTextFromPDF(files: FileList) {
