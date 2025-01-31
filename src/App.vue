@@ -277,8 +277,19 @@ div {
   margin-block: 1em;
   white-space: break-spaces;
 }
+</style>
 
-b {
-  color: brown;
+<style>
+.invalid {
+  line-height: 1.6;
+}
+
+.invalid b {
+  font-weight: 600;
+  outline-color: crimson;
+  outline-style: solid;
+  outline-width: 1px;
+  padding: 0px 2px;
+  margin: 0px 2px;
 }
 </style>
