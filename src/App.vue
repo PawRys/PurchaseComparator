@@ -7,7 +7,7 @@ import { ref } from 'vue'
 
 const results = ref()
 const invalid = ref(0)
-const isWorking = ref('')
+const isWorking = ref(false)
 
 const correctText = (input: string): string => {
   return input
@@ -24,13 +24,13 @@ const getInvoiceNo = (gridFile: string[]): string | undefined => {
 }
 
 async function compareFiles(event: Event): Promise<void> {
-  isWorking.value = 'Pracuję'
+  isWorking.value = true
   const target = event.target as HTMLInputElement
   const pdfFiles = target.files as FileList
   const textFiles = await extractTextFromPDF(pdfFiles)
   const compared = await compareTextFiles(textFiles)
   results.value = compared
-  isWorking.value = 'Zrobione'
+  isWorking.value = false
 }
 
 async function compareTextFiles(textFiles: {
@@ -198,7 +198,6 @@ async function extractTextFromPDF(files: FileList) {
       <label for="file-upload" class="button cta">
         <span>Dodaj pliki</span>
       </label>
-      <span class="isWorking">{{ isWorking }}</span>
     </div>
     <input
       type="file"
@@ -211,7 +210,8 @@ async function extractTextFromPDF(files: FileList) {
       style="display: none"
     />
 
-    <section>
+    <h3 v-if="isWorking">Pracuję...</h3>
+    <section v-else>
       <h3 v-if="!results">Załaduj parami PZ + LF invoice</h3>
       <h3 v-if="results && invalid === 0">Wszystko git</h3>
       <h3 v-if="results && invalid > 0">
