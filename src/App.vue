@@ -12,7 +12,7 @@ const isWorking = ref(false)
 const correctText = (input: string): string => {
   return input
     .split('')
-    .map((char) => charMap[char] || char) // Zamiana znaku, jeśli istnieje w mapie
+    .map((char) => charMap[char] || char)
     .join('')
 }
 
@@ -23,7 +23,7 @@ const getInvoiceNo = (gridFile: string[]): string | undefined => {
   }
 }
 
-async function compareFiles(event: Event): Promise<void> {
+async function comparePurchaseDocuments(event: Event): Promise<void> {
   isWorking.value = true
   const target = event.target as HTMLInputElement
   const pdfFiles = target.files as FileList
@@ -38,7 +38,7 @@ async function compareTextFiles(textFiles: {
   PZ: Map<string, string[]>
 }) {
   invalid.value = 0
-  const compare = []
+  const comparison = []
   const invoiceList = new Set([...textFiles.LF.keys(), ...textFiles.PZ.keys()])
 
   for (const invoiceNo of invoiceList) {
@@ -60,17 +60,17 @@ async function compareTextFiles(textFiles: {
       }
       if (x === '✔️') {
         const str = `${x} <i>${invoiceNo}</i> \n\t${LF_item}\n\t${PZ_item}`
-        compare.push(str)
+        comparison.push(str)
       }
       if (x === '❌') {
         const dif = removeDuplicates(LF_item, PZ_item)
         const str = `\n\t${LF_item}\n\t${PZ_item}`
-        compare.push(`${x} <i>${invoiceNo}</i> ${boldDiffers(str, dif)}`)
+        comparison.push(`${x} <i>${invoiceNo}</i> ${boldDiffers(str, dif)}`)
         invalid.value++
       }
     }
   }
-  return compare
+  return comparison
 }
 
 function removeDuplicates(str1: string, str2: string) {
@@ -89,8 +89,8 @@ function boldDiffers(str: string, dif: string[]) {
   return str.replace(regex, '<b>$1</b>').replace(/_/g, ' ')
 }
 
-async function extractTextFromPDF(files: FileList) {
-  const filesCount = files.length
+async function extractTextFromPDF(pdfFiles: FileList) {
+  const filesCount = pdfFiles.length
   const LF: Map<string, string[]> = new Map()
   const PZ: Map<string, string[]> = new Map()
   let unknownInvoiceCounter = 0
@@ -125,13 +125,13 @@ async function extractTextFromPDF(files: FileList) {
   }
 
   for (let fileIndex = 0; fileIndex < filesCount; fileIndex++) {
-    const file = files[fileIndex]
-    if (file.type !== 'application/pdf') {
-      console.log(`Invalid file type: ${file.type}`, file)
+    const currentFile = pdfFiles[fileIndex]
+    if (currentFile.type !== 'application/pdf') {
+      console.log(`Invalid file type: ${currentFile.type}`, currentFile)
       continue
     }
 
-    const arrayBuffer = await file.arrayBuffer()
+    const arrayBuffer = await currentFile.arrayBuffer()
     const pdf = await pdfjsLib.getDocument(arrayBuffer).promise
     const pagesCount = pdf.numPages
     const gridFile: string[] = []
@@ -157,14 +157,15 @@ async function extractTextFromPDF(files: FileList) {
       gridFile.push(...grid.reverse().map((row) => row.join('')))
     }
 
-    if (file.name.match(/LF[0-9]{2} M[0-9]{6}/)) {
-      const invoiceNo = getInvoiceNo([file.name]) || `unknown invoice ${unknownInvoiceCounter++}`
+    if (currentFile.name.match(/LF[0-9]{2} M[0-9]{6}/)) {
+      const invoiceNo =
+        getInvoiceNo([currentFile.name]) || `unknown invoice ${unknownInvoiceCounter++}`
       const temp = getProductDetails(gridFile)
       const productsToCompare = getUnifiedProductDetails(temp)
       LF.set(`${invoiceNo}`, productsToCompare)
     }
 
-    if (file.name.match(/[0-9]{2}-PZ [0-9]{4}[A-Z]{2,}/)) {
+    if (currentFile.name.match(/[0-9]{2}-PZ [0-9]{4}[A-Z]{2,}/)) {
       const invoiceNo = getInvoiceNo(gridFile) || `unknown invoice ${unknownInvoiceCounter++}`
       const productsToCompare = getUnifiedProductDetails(gridFile)
       PZ.set(`${invoiceNo}`, productsToCompare)
@@ -205,7 +206,7 @@ async function extractTextFromPDF(files: FileList) {
       id="file-upload"
       class="button"
       multiple
-      @change="compareFiles"
+      @change="comparePurchaseDocuments"
       hidden
       style="display: none"
     />
