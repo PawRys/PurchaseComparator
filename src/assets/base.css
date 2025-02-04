@@ -115,7 +115,7 @@ body {
   min-height: 100svh;
 
   margin: auto;
-  /* padding: 1ch; */
+  padding-inline: 1ch;
   width: min(100%, 70ch);
 }
 

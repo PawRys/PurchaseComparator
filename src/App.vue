@@ -59,13 +59,13 @@ async function compareTextFiles(textFiles: {
         x = '❌'
       }
       if (x === '✔️') {
-        const str = `${x} <i>${invoiceNo}</i> \n\t${LF_item}\n\t${PZ_item}`
+        const str = `<span>${x} ${invoiceNo}</span> <span>${LF_item}</span> <span>${PZ_item}</span>`
         comparison.push(str)
       }
       if (x === '❌') {
-        const dif = removeDuplicates(LF_item, PZ_item)
-        const str = `\n\t${LF_item}\n\t${PZ_item}`
-        comparison.push(`${x} <i>${invoiceNo}</i> ${boldDiffers(str, dif)}`)
+        const dif = searchForDiffers(LF_item, PZ_item)
+        const str = `<span>${LF_item}</span> <span>${PZ_item}</span>`
+        comparison.push(`<span>${x} ${invoiceNo}</span> ${boldDiffers(str, dif)}`)
         invalid.value++
       }
     }
@@ -73,7 +73,7 @@ async function compareTextFiles(textFiles: {
   return comparison
 }
 
-function removeDuplicates(str1: string, str2: string) {
+function searchForDiffers(str1: string, str2: string) {
   const arr1 = (str1 || '').replace(/x[0-9]+x/g, ' $& ').split(/[  ]+/)
   const arr2 = (str2 || '').replace(/x[0-9]+x/g, ' $& ').split(/[  ]+/)
   const set1 = new Set(arr1)
@@ -281,6 +281,27 @@ div {
 </style>
 
 <style>
+:is(.valid, .invalid) {
+  display: grid;
+}
+
+:is(.valid, .invalid) span:nth-of-type(2)::before {
+  content: 'LF';
+}
+
+:is(.valid, .invalid) span:nth-of-type(3)::before {
+  content: 'PZ';
+}
+
+:is(.valid, .invalid) span:nth-of-type(2)::before,
+:is(.valid, .invalid) span:nth-of-type(3)::before {
+  display: inline-block;
+  font-weight: 600;
+  color: silver;
+  width: 3ch;
+  margin-left: 1ch;
+}
+
 .invalid {
   line-height: 1.6;
 }
