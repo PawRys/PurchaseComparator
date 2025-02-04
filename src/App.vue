@@ -274,15 +274,14 @@ async function extractTextFromPDF(pdfFiles: FileList) {
   display: revert;
 }
 
-div {
+:is(.valid, .invalid) {
   margin-block: 1em;
-  white-space: break-spaces;
 }
 </style>
 
 <style>
-:is(.valid, .invalid) {
-  display: grid;
+:is(.valid, .invalid) span {
+  display: block;
 }
 
 :is(.valid, .invalid) span:nth-of-type(2)::before {
