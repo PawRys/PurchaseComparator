@@ -115,10 +115,10 @@ export function getUnifiedProductDetails(array: string[]): string[] {
   let counter = 0
   for (let i = 0; i < array.length; i++) {
     const size = getSize(array[i])
-    const glue = getGlueType(array[i])
+    const glue = getGlueType(array[i]) || '404-glue'
     const face = getFaceType(array[i])
     const color = getColor(array[i], face)
-    const quant = getQuantity(array[i])
+    const quant = getQuantity(array[i]) || '404-quant'
     if (size && !array[i].match(/Pozycja [0-9]{1,}/)) {
       result.push(`${++counter}. ${glue} ${size} ${face} ${color} - ${Number(quant)}`)
     }
