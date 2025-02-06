@@ -6,7 +6,7 @@ import { charMap, getProductDetails, getUnifiedProductDetails } from '@/scripts/
 import { ref } from 'vue'
 
 const results = ref()
-const invalid = ref(0)
+const invalidCount = ref(0)
 const isWorking = ref(false)
 
 const correctText = (input: string): string => {
@@ -37,7 +37,7 @@ async function compareTextFiles(textFiles: {
   LF: Map<string, string[]>
   PZ: Map<string, string[]>
 }) {
-  invalid.value = 0
+  invalidCount.value = 0
   const comparison = []
   const invoiceList = new Set([...textFiles.LF.keys(), ...textFiles.PZ.keys()])
 
@@ -66,7 +66,7 @@ async function compareTextFiles(textFiles: {
         const dif = searchForDiffers(LF_item, PZ_item)
         const str = `<span>${LF_item}</span> <span>${PZ_item}</span>`
         comparison.push(`<span>${x} ${invoiceNo}</span> ${boldDiffers(str, dif)}`)
-        invalid.value++
+        invalidCount.value++
       }
     }
   }
@@ -214,9 +214,9 @@ async function extractTextFromPDF(pdfFiles: FileList) {
     <h3 v-if="isWorking">Pracuję...</h3>
     <section v-else>
       <h3 v-if="!results">Załaduj parami PZ + LF invoice</h3>
-      <h3 v-if="results && invalid === 0">Wszystko git</h3>
-      <h3 v-if="results && invalid > 0">
-        Znaleziono {{ invalid }} błędów na {{ results.length }} pozycji.
+      <h3 v-if="results && invalidCount === 0">Wszystko git ({{ results.length }} testów)</h3>
+      <h3 v-if="results && invalidCount > 0">
+        Znaleziono {{ invalidCount }} błędów na {{ results.length }} pozycji.
       </h3>
       <label v-if="results" for="valid_items" class="show-valid">
         <input type="checkbox" name="valid_items" id="valid_items" />
