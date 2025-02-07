@@ -118,9 +118,9 @@ export function getUnifiedProductDetails(array: string[]): string[] {
     const glue = getGlueType(array[i]) || '404-glue'
     const face = getFaceType(array[i])
     const color = getColor(array[i], face)
-    const quant = getQuantity(array[i]) || '404-quant'
+    const quant = getQuantity(array[i])?.toFixed(3) || '404-quant'
     if (size && !array[i].match(/Pozycja [0-9]{1,}/)) {
-      result.push(`${++counter}. ${glue} ${size} ${face} ${color} - ${Number(quant)}`)
+      result.push(`${++counter}. ${glue} ${size} ${face} ${color} - ${quant}`)
     }
   }
   // console.log(result)
@@ -128,10 +128,10 @@ export function getUnifiedProductDetails(array: string[]): string[] {
   return result
 }
 
-function getQuantity(input: string): string | undefined {
-  const match = input.match(/([0-9]+([,.][0-9]+){1}) (cbm|sqr|pcs|m3|m2|szt)/)
-  const match_2 = match ? match[0].match(/([0-9]+([,.][0-9]+){1})/) : undefined
-  return match_2 ? match_2[0].replace(/,/g, '.') : undefined
+function getQuantity(input: string): number | undefined {
+  const match = input.match(/([0-9]+([,.][0-9]+){0,1}) (cbm|sqr|pcs|m3|m2|szt)/)
+  const match_2 = match ? match[0].match(/([0-9]+([,.][0-9]+){0,1})/) : undefined
+  return match_2 ? Number(match_2[0].replace(/,/g, '.')) : undefined
 }
 
 function getSize(input: string): string | undefined {
