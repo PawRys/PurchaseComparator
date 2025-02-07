@@ -176,7 +176,7 @@ async function extractTextFromPDF(pdfFiles: FileList) {
 </script>
 
 <template>
-  <header>
+  <header class="noprint">
     <p>
       <a href="https://pawrys.github.io/StockBrowser5/">Stany</a>
       <span> / </span>
@@ -195,7 +195,7 @@ async function extractTextFromPDF(pdfFiles: FileList) {
   </header>
 
   <main>
-    <div class="button-bar">
+    <div class="button-bar noprint">
       <label for="file-upload" class="button cta">
         <span>Dodaj pliki</span>
       </label>
@@ -218,7 +218,7 @@ async function extractTextFromPDF(pdfFiles: FileList) {
       <h3 v-if="results && invalidCount > 0">
         Znaleziono {{ invalidCount }} błędów na {{ results.length }} pozycji.
       </h3>
-      <label v-if="results" for="valid_items" class="show-valid">
+      <label v-if="results" for="valid_items" class="show-valid noprint">
         <input type="checkbox" name="valid_items" id="valid_items" />
         <span>Pokaż prawidłowe</span>
       </label>
@@ -312,5 +312,15 @@ async function extractTextFromPDF(pdfFiles: FileList) {
   outline-width: 1px;
   padding: 0px 2px;
   margin: 0px 2px;
+}
+
+@media print {
+  .noprint {
+    display: none !important;
+  }
+
+  :is(.valid, .invalid) {
+    page-break-inside: avoid;
+  }
 }
 </style>
