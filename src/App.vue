@@ -173,6 +173,45 @@ async function extractTextFromPDF(pdfFiles: FileList) {
   }
   return { LF: LF, PZ: PZ }
 }
+
+// async function colors(str: string): Promise<string> {
+//   const utf8 = new TextEncoder().encode(str)
+//   return crypto.subtle.digest('SHA-256', utf8).then((hashBuffer) => {
+//     const hashArray = Array.from(new Uint8Array(hashBuffer))
+//     const hashHex = hashArray.map((bytes) => bytes.toString(16).padStart(2, '0')).join('')
+//     return hashHex
+//   })
+// }
+
+function murmurHash3(str: string) {
+  let h = 0xdeadbeef // Initial hash seed
+  for (let i = 0; i < str.length; i++) {
+    h = Math.imul(h ^ str.charCodeAt(i), 2654435761)
+  }
+  return (h ^ (h >>> 16)) >>> 0 // Ensure positive 32-bit integer
+}
+
+function hashToRGB(hash: number) {
+  const r = (hash >> 16) & 255 // Extract red
+  const g = (hash >> 8) & 255 // Extract green
+  const b = hash & 255 // Extract blue
+  return `rgb(${r}, ${g}, ${b})`
+}
+
+function hashToHSL(hash: number) {
+  const h = hash % 360 // Hue: 0-359
+  const s = 80 + (hash % 20) // Saturation: 50-100%
+  const l = 60 + (hash % 20) // Lightness: 40-80%
+  return `hsl(${h}, ${s}%, ${l}%)`
+}
+
+// function stringToRGB(str: string) {
+//   return hashToRGB(murmurHash3(str))
+// }
+
+function stringToHSL(str: string) {
+  return hashToHSL(murmurHash3(str))
+}
 </script>
 
 <template>
@@ -228,6 +267,7 @@ async function extractTextFromPDF(pdfFiles: FileList) {
         :key="item"
         v-html="item"
         :class="{ valid: item.match('✔️'), invalid: item.match('❌') }"
+        :style="`border-left: solid 1ch ${stringToHSL(item.match(/LF[0-9]{2} M[0-9]{6}/)[0])}`"
       ></div>
     </section>
   </main>
@@ -276,6 +316,7 @@ async function extractTextFromPDF(pdfFiles: FileList) {
 
 :is(.valid, .invalid) {
   margin-block: 1em;
+  padding-left: 1ch;
 }
 </style>
 
