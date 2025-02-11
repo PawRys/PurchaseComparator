@@ -191,12 +191,12 @@ function murmurHash3(str: string) {
   return (h ^ (h >>> 16)) >>> 0 // Ensure positive 32-bit integer
 }
 
-function hashToRGB(hash: number) {
-  const r = (hash >> 16) & 255 // Extract red
-  const g = (hash >> 8) & 255 // Extract green
-  const b = hash & 255 // Extract blue
-  return `rgb(${r}, ${g}, ${b})`
-}
+// function hashToRGB(hash: number) {
+//   const r = (hash >> 16) & 255 // Extract red
+//   const g = (hash >> 8) & 255 // Extract green
+//   const b = hash & 255 // Extract blue
+//   return `rgb(${r}, ${g}, ${b})`
+// }
 
 function hashToHSL(hash: number) {
   const h = hash % 360 // Hue: 0-359
