@@ -174,36 +174,28 @@ async function extractTextFromPDF(pdfFiles: FileList) {
   return { LF: LF, PZ: PZ }
 }
 
-function murmurHash3(str: string) {
-  let h = 0xcafebabe // Initial hash seed
-  for (let i = 0; i < str.length; i++) {
-    h = Math.imul(h ^ str.charCodeAt(i), 2 ^ (32 * 1.618))
-  }
-  return (h ^ (h >>> 16)) >>> 0 // Ensure positive 32-bit integer
-}
-
 function hashToHSL(hash: number) {
-  const h = hash % 360 // Hue: 0-359
-  const s = 80 + (hash % 20) // Saturation: 50-100%
-  const l = 60 + (hash % 20) // Lightness: 40-80%
+  const a = 6
+  const b = 360 / a
+  const h = 140 + b * (hash % a) // Hue: 0-359
+  const s = 60 + (hash % 20) * 0 // Saturation: 50-100%
+  const l = 60 + (hash % 20) * 0 // Lightness: 40-80%
   return `hsl(${h}, ${s}%, ${l}%)`
 }
 
 function stringToHSL(str: string) {
-  return hashToHSL(murmurHash3(str))
+  return hashToHSL(Number(str))
 }
 
-const counter = ref(0)
-const lastInvoice = ref('')
-
+let counter = 0
+let lastInvoice = ''
 function nextNumber(invoiceIndex: string): string {
-  if (lastInvoice.value !== invoiceIndex) {
-    counter.value++
-    lastInvoice.value = invoiceIndex
+  if (lastInvoice !== invoiceIndex) {
+    lastInvoice = invoiceIndex
+    counter++
   }
-  // console.log(counter.value)
 
-  return String(counter.value)
+  return String(counter)
 }
 </script>
 
@@ -260,13 +252,13 @@ function nextNumber(invoiceIndex: string): string {
         :key="item"
         v-html="item"
         :class="{ valid: item.match('✔️'), invalid: item.match('❌') }"
-        :style="`border-left: solid 1ch ${stringToHSL(item.match(/LF\d{2} M\d{6}/)[0])}`"
+        :style="`border-left: solid 1ch ${stringToHSL(nextNumber(item.match(/LF\d{2} M\d{6}/)[0]))}`"
       ></div>
     </section>
 
-    <!-- <section id="test">
+    <section id="test">
       <div v-for="i in 100" :key="i" :style="`background-color: ${stringToHSL(String(i))}`"></div>
-    </section> -->
+    </section>
   </main>
 
   <footer>
