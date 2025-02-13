@@ -175,9 +175,7 @@ async function extractTextFromPDF(pdfFiles: FileList) {
 }
 
 function hashToHSL(hash: number) {
-  const a = 6
-  const b = 360 / a
-  const h = b * (hash % a) + 220
+  const h = hash * 360 * 0.6180339887498949
   const s = 60
   const l = 60
   return `hsl(${h}, ${s}%, ${l}%)`
@@ -258,9 +256,9 @@ function nextNumber(invoiceIndex: string): number {
       ></div>
     </section>
 
-    <section id="test">
+    <!--section id="test">
       <div v-for="i in 100" :key="i" :style="`background-color: ${hashToHSL(i)}`"></div>
-    </section>
+    </section-->
   </main>
 
   <footer>
