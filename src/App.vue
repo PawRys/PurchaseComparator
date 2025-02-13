@@ -177,25 +177,27 @@ async function extractTextFromPDF(pdfFiles: FileList) {
 function hashToHSL(hash: number) {
   const a = 6
   const b = 360 / a
-  const h = 140 + b * (hash % a) // Hue: 0-359
-  const s = 60 + (hash % 20) * 0 // Saturation: 50-100%
-  const l = 60 + (hash % 20) * 0 // Lightness: 40-80%
+  const h = b * (hash % a) + 220
+  const s = 60
+  const l = 60
   return `hsl(${h}, ${s}%, ${l}%)`
 }
 
 function stringToHSL(str: string) {
-  return hashToHSL(Number(str))
+  const invNumber = str.match(/LF\d{2} M\d{6}/)
+  const num = nextNumber(invNumber ? invNumber[0] : '')
+  return hashToHSL(num)
 }
 
 let counter = 0
 let lastInvoice = ''
-function nextNumber(invoiceIndex: string): string {
+function nextNumber(invoiceIndex: string): number {
   if (lastInvoice !== invoiceIndex) {
     lastInvoice = invoiceIndex
     counter++
   }
 
-  return String(counter)
+  return counter
 }
 </script>
 
@@ -252,13 +254,13 @@ function nextNumber(invoiceIndex: string): string {
         :key="item"
         v-html="item"
         :class="{ valid: item.match('✔️'), invalid: item.match('❌') }"
-        :style="`border-left: solid 1ch ${stringToHSL(nextNumber(item.match(/LF\d{2} M\d{6}/)[0]))}`"
+        :style="`border-left: solid 1ch ${stringToHSL(item)}`"
       ></div>
     </section>
 
-    <!-- <section id="test">
-      <div v-for="i in 100" :key="i" :style="`background-color: ${stringToHSL(String(i))}`"></div>
-    </section> -->
+    <section id="test">
+      <div v-for="i in 100" :key="i" :style="`background-color: ${hashToHSL(i)}`"></div>
+    </section>
   </main>
 
   <footer>
