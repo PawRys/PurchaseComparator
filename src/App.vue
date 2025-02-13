@@ -46,7 +46,7 @@ async function compareTextFiles(textFiles: {
     const PZ = textFiles.PZ.get(invoiceNo)
     const allItems = new Set([...(LF || []), ...(PZ || [])])
 
-    console.log(allItems, LF, PZ)
+    // console.log(allItems, LF, PZ)
 
     for (let index = 0; index < allItems.size; index++) {
       let x = '✔️'
@@ -174,29 +174,13 @@ async function extractTextFromPDF(pdfFiles: FileList) {
   return { LF: LF, PZ: PZ }
 }
 
-// async function colors(str: string): Promise<string> {
-//   const utf8 = new TextEncoder().encode(str)
-//   return crypto.subtle.digest('SHA-256', utf8).then((hashBuffer) => {
-//     const hashArray = Array.from(new Uint8Array(hashBuffer))
-//     const hashHex = hashArray.map((bytes) => bytes.toString(16).padStart(2, '0')).join('')
-//     return hashHex
-//   })
-// }
-
 function murmurHash3(str: string) {
-  let h = 0xdeadbeef // Initial hash seed
+  let h = 0xcafebabe // Initial hash seed
   for (let i = 0; i < str.length; i++) {
-    h = Math.imul(h ^ str.charCodeAt(i), 2654435761)
+    h = Math.imul(h ^ str.charCodeAt(i), 2 ^ (32 * 1.618))
   }
   return (h ^ (h >>> 16)) >>> 0 // Ensure positive 32-bit integer
 }
-
-// function hashToRGB(hash: number) {
-//   const r = (hash >> 16) & 255 // Extract red
-//   const g = (hash >> 8) & 255 // Extract green
-//   const b = hash & 255 // Extract blue
-//   return `rgb(${r}, ${g}, ${b})`
-// }
 
 function hashToHSL(hash: number) {
   const h = hash % 360 // Hue: 0-359
@@ -205,12 +189,21 @@ function hashToHSL(hash: number) {
   return `hsl(${h}, ${s}%, ${l}%)`
 }
 
-// function stringToRGB(str: string) {
-//   return hashToRGB(murmurHash3(str))
-// }
-
 function stringToHSL(str: string) {
   return hashToHSL(murmurHash3(str))
+}
+
+const counter = ref(0)
+const lastInvoice = ref('')
+
+function nextNumber(invoiceIndex: string): string {
+  if (lastInvoice.value !== invoiceIndex) {
+    counter.value++
+    lastInvoice.value = invoiceIndex
+  }
+  // console.log(counter.value)
+
+  return String(counter.value)
 }
 </script>
 
@@ -267,9 +260,13 @@ function stringToHSL(str: string) {
         :key="item"
         v-html="item"
         :class="{ valid: item.match('✔️'), invalid: item.match('❌') }"
-        :style="`border-left: solid 1ch ${stringToHSL(item.match(/LF[0-9]{2} M[0-9]{6}/)[0])}`"
+        :style="`border-left: solid 1ch ${stringToHSL(item.match(/LF\d{2} M\d{6}/)[0])}`"
       ></div>
     </section>
+
+    <!-- <section id="test">
+      <div v-for="i in 100" :key="i" :style="`background-color: ${stringToHSL(String(i))}`"></div>
+    </section> -->
   </main>
 
   <footer>
@@ -287,6 +284,17 @@ function stringToHSL(str: string) {
 </template>
 
 <style scoped>
+#test {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  width: min-content;
+}
+#test > div {
+  width: 25px;
+  height: 25px;
+  margin: 2px;
+}
+
 .button-bar {
   align-items: baseline;
   display: flex;
