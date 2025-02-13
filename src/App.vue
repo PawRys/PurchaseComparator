@@ -256,9 +256,9 @@ function nextNumber(invoiceIndex: string): string {
       ></div>
     </section>
 
-    <section id="test">
+    <!-- <section id="test">
       <div v-for="i in 100" :key="i" :style="`background-color: ${stringToHSL(String(i))}`"></div>
-    </section>
+    </section> -->
   </main>
 
   <footer>
