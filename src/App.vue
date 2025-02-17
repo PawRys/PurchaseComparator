@@ -36,6 +36,7 @@ async function comparePurchaseDocuments(event: Event): Promise<void> {
 async function compareTextFiles(textFiles: {
   LF: Map<string, string[]>
   PZ: Map<string, string[]>
+  PZ_name: Map<string, string>
 }) {
   invalidCount.value = 0
   const comparison = []
@@ -44,9 +45,8 @@ async function compareTextFiles(textFiles: {
   for (const invoiceNo of invoiceList) {
     const LF = textFiles.LF.get(invoiceNo)
     const PZ = textFiles.PZ.get(invoiceNo)
+    const PZ_name = textFiles.PZ_name.get(invoiceNo)
     const allItems = new Set([...(LF || []), ...(PZ || [])])
-
-    // console.log(allItems, LF, PZ)
 
     for (let index = 0; index < allItems.size; index++) {
       let x = '✔️'
@@ -59,13 +59,15 @@ async function compareTextFiles(textFiles: {
         x = '❌'
       }
       if (x === '✔️') {
-        const str = `<span>${x} ${invoiceNo}</span> <span>${LF_item}</span> <span>${PZ_item}</span>`
+        const str = `<span>${x} ${invoiceNo} / ${PZ_name ? PZ_name : ''}</span> <span>${LF_item}</span> <span>${PZ_item}</span>`
         comparison.push(str)
       }
       if (x === '❌') {
         const dif = searchForDiffers(LF_item, PZ_item)
         const str = `<span>${LF_item}</span> <span>${PZ_item}</span>`
-        comparison.push(`<span>${x} ${invoiceNo}</span> ${boldDiffers(str, dif)}`)
+        comparison.push(
+          `<span>${x} ${invoiceNo} / ${PZ_name ? PZ_name : ''}</span> ${boldDiffers(str, dif)}`,
+        )
         invalidCount.value++
       }
     }
@@ -93,6 +95,7 @@ async function extractTextFromPDF(pdfFiles: FileList) {
   const filesCount = pdfFiles.length
   const LF: Map<string, string[]> = new Map()
   const PZ: Map<string, string[]> = new Map()
+  const PZ_name: Map<string, string> = new Map()
   let unknownInvoiceCounter = 0
 
   const ensureGridSize = (grid: string[][], y: number, x: number): void => {
@@ -166,12 +169,14 @@ async function extractTextFromPDF(pdfFiles: FileList) {
     }
 
     if (currentFile.name.match(/[0-9]{2}-PZ [0-9]{4}[A-Z]{2,}/)) {
+      const PZName = currentFile.name.match(/[0-9]{2}-PZ [0-9]{4}[A-Z]{2,}/)
       const invoiceNo = getInvoiceNo(gridFile) || `unknown invoice ${unknownInvoiceCounter++}`
       const productsToCompare = getUnifiedProductDetails(gridFile)
       PZ.set(`${invoiceNo}`, productsToCompare)
+      PZ_name.set(`${invoiceNo}`, PZName ? PZName[0] : 'Nieznany numer PZ')
     }
   }
-  return { LF: LF, PZ: PZ }
+  return { LF: LF, PZ: PZ, PZ_name: PZ_name }
 }
 
 function hashToHSL(hash: number) {
