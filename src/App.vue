@@ -212,9 +212,9 @@ function nextNumber(invoiceIndex: string): number {
     <h1>Tester PZ</h1>
     <p>Narzędzie do porównywania PZ z fakturą LF.</p>
     <p>
-      PDF z naszym PZ musi zawierać <b>dokładny numer faktury z LF</b>, oraz ustawione w opcjach
-      wydruku <b>kod towaru obok nazwy towaru</b>. Można zaznaczyć i "wgrać" wiele plików
-      jednocześnie.
+      PDF z naszym PZ musi zawierać dokładny numer faktury z LF (<b>LFxx Mxxxxxx</b>), oraz
+      ustawione w opcjach wydruku <b>kod towaru obok nazwy towaru</b>. Można zaznaczyć i "wgrać"
+      wiele plików jednocześnie.
     </p>
   </header>
 
