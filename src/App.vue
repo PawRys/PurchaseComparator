@@ -50,8 +50,8 @@ async function compareTextFiles(textFiles: {
 
     for (let index = 0; index < allItems.size; index++) {
       let x = '✔️'
-      const LF_item = LF ? LF[index] : 'Brak_dokumentu_LF_invoice'
-      const PZ_item = PZ ? PZ[index] : 'Brak_dokumentu_PZ'
+      const LF_item = LF ? LF[index] : 'Brak dokumentu LF invoice'
+      const PZ_item = PZ ? PZ[index] : 'Brak dokumentu PZ'
       if (!LF_item && !PZ_item) {
         continue
       }
@@ -65,9 +65,7 @@ async function compareTextFiles(textFiles: {
       if (x === '❌') {
         const dif = searchForDiffers(LF_item, PZ_item)
         const str = `<span>${LF_item}</span> <span>${PZ_item}</span>`
-        comparison.push(
-          `<span>${x} ${invoiceNo} / ${PZ_name ? PZ_name : ''}</span> ${boldDiffers(str, dif)}`,
-        )
+        comparison.push(`<span>${x} ${invoiceNo} / ${PZ_name}</span> ${boldDiffers(str, dif)}`)
         invalidCount.value++
       }
     }
@@ -88,7 +86,7 @@ function searchForDiffers(str1: string, str2: string) {
 function boldDiffers(str: string, dif: string[]) {
   const pattern = `(${dif.join('|').replace(/[.*+?^${}()]/g, '\\$&')})`
   const regex = new RegExp(pattern, 'g')
-  return str.replace(regex, '<b>$1</b>').replace(/_/g, ' ')
+  return str.replace(regex, '<b>$1</b>').replace(/<\/b>( *)<b>/g, '$1')
 }
 
 async function extractTextFromPDF(pdfFiles: FileList) {
