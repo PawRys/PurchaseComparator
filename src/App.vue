@@ -86,7 +86,7 @@ function searchForDiffers(str1: string, str2: string) {
 function boldDiffers(str: string, dif: string[]) {
   const pattern = `(${dif.join('|').replace(/[.*+?^${}()]/g, '\\$&')})`
   const regex = new RegExp(pattern, 'g')
-  return str.replace(regex, '<b>$1</b>').replace(/<\/b>( *)<b>/g, '$1')
+  return str.replace(regex, '<b>$1</b>').replace(/<\/b>([  ]*)<b>/g, '$1')
 }
 
 async function extractTextFromPDF(pdfFiles: FileList) {
