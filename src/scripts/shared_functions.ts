@@ -152,7 +152,7 @@ function getGlueType(text: string): string | undefined {
   if (/sucho|\bMR\b|\bINT\b/g.test(text)) result = 'MR'
   if (/wodo|\bWD\b|\bEXT\b|\bE\b/g.test(text)) result = 'WD'
   if (/lamin|foliowana|antypo/g.test(text)) result = 'WD'
-  if (/melamin|M\?M/g.test(text)) result = 'WD'
+  if (/melamin|M\?M/g.test(text) && !result) result = 'WD'
   return result
 }
 
