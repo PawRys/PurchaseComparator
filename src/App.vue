@@ -74,8 +74,8 @@ async function compareTextFiles(textFiles: {
 }
 
 function searchForDiffers(str1: string, str2: string) {
-  const arr1 = (str1 || '').replace(/x[0-9]+x/g, ' $& ').split(/[  ]+/)
-  const arr2 = (str2 || '').replace(/x[0-9]+x/g, ' $& ').split(/[  ]+/)
+  const arr1 = (str1 || 'whatafak').replace(/x[0-9]+x/g, ' $& ').split(/[  ]+/)
+  const arr2 = (str2 || 'whatafak').replace(/x[0-9]+x/g, ' $& ').split(/[  ]+/)
   const set1 = new Set(arr1)
   const set2 = new Set(arr2)
   const uniqueArr1 = arr1.filter((item) => !set2.has(item))
