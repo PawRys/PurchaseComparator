@@ -158,7 +158,7 @@ function getGlueType(text: string): string | undefined {
 function getFaceType(text: string): string | undefined {
   let result = undefined
 
-  const regexpGrade = /\b(S|B|BB|CP|WG|WGE|C|CC|V|M|F|W)\b/
+  const regexpGrade = /\b(S|B|BB|CP|WG|WGE|C|CC|V|M|F|W|F I|W I|F II|W II)\b/
   const expression = new RegExp(`${regexpGrade.source}/${regexpGrade.source}`, 'gi')
   if (expression.test(text)) {
     const grade = text.match(expression)
