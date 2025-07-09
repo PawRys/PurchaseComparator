@@ -158,11 +158,12 @@ function getGlueType(text: string): string | undefined {
 function getFaceType(text: string): string | undefined {
   let result = undefined
 
-  const regexpGrade = /\b(S|B|BB|CP|WG|WGE|C|CC|V|M|F|W|F I|W I|F II|W II)\b/
+  const regexpGrade = /\b(S|B|BB|CP|WG|WGE|C|CC|V|M|F II|W II|F I|W I|F|W)\b/
   const expression = new RegExp(`${regexpGrade.source}/${regexpGrade.source}`, 'gi')
   if (expression.test(text)) {
     const grade = text.match(expression)
     result = grade ? grade[0] : '??/??'
+    result = result.replace(/ I{1,2}/g, '')
   }
   /*!!! Keep order. Any order if equal number. !!! */
 
@@ -177,8 +178,8 @@ function getFaceType(text: string): string | undefined {
   /*1*/ if (/s09\//gi.test(text)) result = 'WG/WG'
   /*1*/ if (/s10\//gi.test(text)) result = 'C/C'
   /*1*/ if (/s11\//gi.test(text)) result = 'Kilo'
-  /*1*/ if (/s12\/|s13\/|FORM/gi.test(text)) result = 'F/F' // II applied in *4*
-  /*1*/ if (/s14\/|s15\/|TEX|MESH|DIAMOND|TRANS|RHOMB/gi.test(text)) result = 'F/W' // II applied in *4*
+  /*1*/ if (/s12\/|s13\//gi.test(text)) result = 'F/F' // II applied in *4*
+  /*1*/ if (/s14\/|s15\//gi.test(text)) result = 'W/F' // II applied in *4*
   /*1*/ if (/s16\/|s17\//gi.test(text)) result = 'W/W' // II applied in *4*
   /*1*/ if (/s18\//gi.test(text)) result = 'CP/C'
   /*1*/ if (/s19\//gi.test(text)) result = 'M/WG'
@@ -237,6 +238,7 @@ function getColor(text: string, faceType: string | undefined): string | undefine
   if (results.size === 0) {
     if (faceType?.match('F/F')) results.add('d.brown')
     if (faceType?.match('F/W')) results.add('d.brown')
+    if (faceType?.match('W/F')) results.add('d.brown')
     if (faceType?.match('W/W')) results.add('d.brown')
     if (faceType?.match('Heksa')) results.add('d.brown')
     if (faceType?.match('M/M')) results.add('white')
