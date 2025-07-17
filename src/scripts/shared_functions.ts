@@ -158,12 +158,12 @@ function getGlueType(text: string): string | undefined {
 function getFaceType(text: string): string | undefined {
   let result = undefined
 
-  const regexpGrade = /\b(S|B|BB|CP|WG|WGE|C|CC|V|M|F II|W II|F I|W I|F|W)\b/
+  const regexpGrade = /\b(S|B|BB|CP|WG|WGE|C|CC|V|[WFM][ALT]?( I{1,2})?)\b/
   const expression = new RegExp(`${regexpGrade.source}/${regexpGrade.source}`, 'gi')
   if (expression.test(text)) {
     const grade = text.match(expression)
     result = grade ? grade[0] : '??/??'
-    result = result.replace(/ I{1,2}/g, '')
+    result = result.replace(/[ALT]? I{1,2}/g, '')
   }
   /*!!! Keep order. Any order if equal number. !!! */
 
@@ -213,7 +213,8 @@ function getFaceType(text: string): string | undefined {
   /*3*/ if (/OSB/gi.test(text)) result = 'OSB'
 
   /*4*/ // !important Apply II grade at the end
-  /*4*/ if (/s13\/|s15\/|s17\/|((WT|FA|MA|W|F|M) II)/gi.test(text)) result += ' II'
+  // /*4*/ if (/s13\/|s15\/|s17\/|((WT|FA|MA|W|F|M) II)/gi.test(text)) result += ' II'
+  /*4*/ if (/s13\/|s15\/|s17\/|([WFM][ALT]? II)/gi.test(text)) result += ' II'
 
   return result
 }
