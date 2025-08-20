@@ -329,18 +329,19 @@ function nextNumber(invoiceIndex: string): number {
 }
 
 :is(.valid, .invalid) span:nth-of-type(2)::before {
-  content: 'LF';
+  content: 'LF:';
+  color: brown;
 }
 
 :is(.valid, .invalid) span:nth-of-type(3)::before {
-  content: 'PZ';
+  content: 'PZ:';
+  color: navy;
 }
 
 :is(.valid, .invalid) span:nth-of-type(2)::before,
 :is(.valid, .invalid) span:nth-of-type(3)::before {
   display: inline-block;
   font-weight: 600;
-  color: silver;
   width: 3ch;
   margin-left: 1ch;
 }
