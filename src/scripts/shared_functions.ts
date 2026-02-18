@@ -285,10 +285,10 @@ export function getUnifiedProductDetails(array: string[]): string[] {
   let counter = 0
   for (let i = 0; i < array.length; i++) {
     const size = getSize(array[i])
-    const glue = getGlueType(array[i]) || '404-glue'
+    const glue = getGlueType(array[i]) || 'brak-kleju'
     const face = getFaceType(array[i])
     const color = getColor(array[i], face)
-    const quant = getQuantity(array[i]) || '404-quant'
+    const quant = getQuantity(array[i]) || 'brak-ilosci'
     if (size && !array[i].match(/Pozycja [0-9]{1,}/)) {
       result.push(`${++counter}. ${glue} ${size} ${face} ${color} - ${quant}`)
     }
@@ -309,7 +309,7 @@ function getQuantity(input: string): string | undefined {
   const unit = match_unit
     ? match_unit[0].replace(/cbm|sqr|pcs/g, (match) => replacements[match])
     : undefined
-  return `${quant || '404-quant'} ${unit || '404-unit'}`
+  return `${quant || 'brak-ilosci'} ${unit || 'brak-jmiary'}`
 }
 
 function getSize(input: string): string | undefined {
