@@ -320,7 +320,7 @@ function getSize(input: string): string | undefined {
     codeCheck = size[0].includes(sizeMap[code[1]])
   }
 
-  return size ? `${size[0].replace(/,/g, '.')}${codeCheck ? '' : '*'}` : undefined
+  return size ? `${size[0].replace(/,/g, '.')}${codeCheck ? '' : ' zły_kod'}` : undefined
 }
 
 function getGlueType(text: string): string | undefined {
