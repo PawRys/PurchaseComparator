@@ -315,12 +315,12 @@ function getQuantity(input: string): string | undefined {
 function getSize(input: string): string | undefined {
   const size = input.match(/\d+([,.]\d+)?x\d{2,4}x\d{2,4}/i)
   const code = input.match(/\d{2,3}S\d{2}\/(\d{2,3})/i)
-  let codeCheck: boolean = true
+  let codeCheck: string = ''
   if (code && size) {
-    codeCheck = size[0].includes(sizeMap[code[1]])
+    codeCheck = size[0].includes(sizeMap[code[1]]) ? '' : `Kod ${code[1]}: ${sizeMap[code[1]]}`
   }
 
-  return size ? `${size[0].replace(/,/g, '.')}${codeCheck ? '' : ' zły_kod'}` : undefined
+  return size ? `${size[0].replace(/,/g, '.')} ${codeCheck}` : undefined
 }
 
 function getGlueType(text: string): string | undefined {
