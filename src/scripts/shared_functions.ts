@@ -193,6 +193,7 @@ const sizeMap: { [key: string]: string } = {
   '165': '2000x3850',
   '166': '1250x3660',
   '167': '1270x1270',
+  '168': '1850x4000',
 }
 
 export interface LabelInterface {
