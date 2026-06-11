@@ -33,7 +33,11 @@ async function loadSizeMap(): Promise<{ [key: string]: string }> {
   return await response.json()
 }
 
-const sizeMap = await loadSizeMap()
+let sizeMap: Record<string, string> = {}
+
+loadSizeMap().then((data) => {
+  sizeMap = data
+})
 
 export interface LabelInterface {
   contract: string
