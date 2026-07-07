@@ -223,7 +223,7 @@ function getFaceType(text: string): string | undefined {
   /*2.3*/ if (/\bPQ\W?F\b/gi.test(text)) result = 'PQF'
   /*3*/ if (/\bF\/W\W?H\b|Heksa/gi.test(text)) result = 'Heksa'
   /*3*/ if (/\bF\/W\W?H\W?\+|Heksa\W?\+|Heksa Plus/gi.test(text)) result = 'Heksa Plus'
-  /*3*/ if (/\bM\/M\b|MEL|\bopal white\b/gi.test(text)) result = 'M/M'
+  /*3*/ if (/\bM\/M\b|\bopal white\b/gi.test(text)) result = 'M/M'
   // /*3*/ if (/\bhoney\b/gi.test(text)) result = 'Honey'
   // /*3*/ if (/\bM\/M\b|mel/gi.test(text)) result = 'M/M'
   // /*3*/ if (/\bopal\b/gi.test(text)) result = 'Opal'
