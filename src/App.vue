@@ -4,6 +4,7 @@ import 'pdfjs-dist/build/pdf.worker.min.mjs'
 import type { TextItem } from 'pdfjs-dist/types/src/display/api'
 import { charMap, getProductDetails, getUnifiedProductDetails } from '@/scripts/shared_functions'
 import { ref } from 'vue'
+import MyApps from '@/components/MyApps.vue'
 
 const results = ref()
 const invalidCount = ref(0)
@@ -204,13 +205,7 @@ function nextNumber(invoiceIndex: string): number {
 
 <template>
   <header class="noprint">
-    <p>
-      <a href="https://pawrys.github.io/StockBrowser5/">Stany</a>
-      <span> / </span>
-      <a href="https://pawrys.github.io/LabelGenerator/">Etykiety</a>
-      <span> / </span>
-      <a href="https://pawrys.github.io/PurchaseComparator/">Tester</a>
-    </p>
+    <p><MyApps /></p>
 
     <h1>Tester PZ</h1>
     <p>Narzędzie do porównywania PZ z fakturą LF.</p>
@@ -331,11 +326,10 @@ function nextNumber(invoiceIndex: string): number {
 :is(.valid, .invalid) span:nth-of-type(3)::before {
   display: inline-block;
   font-weight: 600;
-  color:slategray;
+  color: slategray;
   width: 3ch;
   margin-left: 1ch;
 }
-
 
 :is(.valid, .invalid) span:nth-of-type(2)::before {
   content: 'LF:';
